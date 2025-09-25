@@ -25,7 +25,7 @@ public class ResultsUI : MonoBehaviour
         {
             resultLines[i].text = $"{sorted[i].name} - {FormatTime(sorted[i].time)}s";
 
-            // reset color
+            // reset to neutral
             resultLines[i].color = Color.black;
 
             // highlight only the player’s entry
