@@ -11,9 +11,9 @@ public class ResultsUI : MonoBehaviour
     public void ShowResults(float playerTime)
     {
         List<(string name, float time, bool isPlayer)> scores = new List<(string, float, bool)> {
-            ("Subject 1", 16.23f, false),
-            ("Subject 2", 28.45f, false),
-            ("Subject 4", 41.10f, false),
+            ("Subject 1", 18.05f, false),
+            ("Subject 2", 20.45f, false),
+            ("Subject 4", 25.10f, false),
             ("Subject 3 (You)", playerTime, true)
         };
 
@@ -28,7 +28,7 @@ public class ResultsUI : MonoBehaviour
             // reset to neutral
             resultLines[i].color = Color.black;
 
-            // highlight only the player’s entry
+            // highlight only the playerï¿½s entry
             if (sorted[i].isPlayer)
             {
                 resultLines[i].color = Color.red;

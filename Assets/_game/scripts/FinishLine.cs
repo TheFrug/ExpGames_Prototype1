@@ -11,28 +11,40 @@ public class FinishLine : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
+            finished = true;                      // <- prevent re-trigger
             GameManager.Instance.finished = true;
 
-            // 1. Stop the timer
+            // Stop the timer and dummy rat
             Timer timer = FindObjectOfType<Timer>();
             if (timer != null)
             {
                 timer.StopTimer();
             }
 
-            // 2. Show results (populate text)
+            if (GameManager.Instance != null && GameManager.Instance.dummyRat != null)
+            {
+                GameManager.Instance.dummyRat.StopRunning();
+            }
+
+            // Disable player input immediately so nothing else can happen
+            PlayerInput pInput = collision.GetComponent<PlayerInput>();
+            if (pInput != null)
+            {
+                pInput.DisableControl();
+            }
+
+            // Show results (populate text)
+            float elapsed = (timer != null) ? timer.ElapsedTime : 0f;
             if (finishUI != null)
             {
                 finishUI.SetActive(true);
 
-                // Results text building
                 ResultsUI results = finishUI.GetComponent<ResultsUI>();
                 if (results != null)
                 {
-                    results.ShowResults(timer.ElapsedTime);
+                    results.ShowResults(elapsed);
                 }
 
-                // Slide panel onto screen
                 UISlideIn slider = finishUI.GetComponent<UISlideIn>();
                 if (slider != null)
                 {
@@ -41,4 +53,10 @@ public class FinishLine : MonoBehaviour
             }
         }
     }
+
+    public void ResetFinishLine()
+    {
+        finished = false;
+    }
+
 }
