@@ -8,57 +8,59 @@ public class PlayerInput : MonoBehaviour
     public float moveSpeed = 5f; // Forward/backward speed
     public float turnSpeed = 180f; // Degrees per second
 
-    [Header("Dash Settings")]
-    //public float maxChargeTime = 2f; // How long can you hold to fully charge
-    //public float dashForceMax = 20f; // Max force applied when dash is released
-    //public KeyCode chargeKey = KeyCode.LeftShift;
-    //private bool knowsTheTech = false;
+    [Header("Animation Settings")]
+    private Animator animator;
 
     [HideInInspector] public bool isMoving = false; // Animator will read this
 
     private Rigidbody2D rb;
-    //private float chargeTimer = 0f;
-    //private bool isCharging = false;
+
+    private Vector2 startPosition;
+    private Quaternion startRotation;
 
     void Start()
     {
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
-            Debug.LogError("PlayerInput requires a Rigidbody!");
+            Debug.LogError("PlayerInput requires a Rigidbody2D!");
+        }
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("PlayerInput requires an Animator!");
         }
     } 
 
-    // Update is called once per frame
     void Update()
     {
         HandleMovement();
-        //HandleCharge();
+
+        // Pass movement state to animator
+        if (animator != null)
+        {
+            animator.SetBool("isMoving", isMoving);
+        }
     }
 
     private void HandleMovement()
     {
-        // Tank-style forward/back movement
-        float moveInput = Input.GetAxis("Vertical"); // W/s or Up/Down arrows
-        float turnInput = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
+        float moveInput = Input.GetAxis("Vertical");
+        float turnInput = Input.GetAxis("Horizontal");
 
-        // Translate long forward
+        // Move forward/backward
         Vector2 move = (Vector2)transform.up * moveInput * moveSpeed * Time.deltaTime;
         rb.MovePosition(rb.position + move);
 
-        // Rotate
+        // Rotate (tank-style turning)
         float rotation = -turnInput * turnSpeed * Time.deltaTime;
         rb.MoveRotation(rb.rotation + rotation);
-    }
 
-    /*
-    private void HandleCharge()
-    {
-        if (Input.GetKeyDown(chargeKey))
-        {
-            isCharging = true;
-            chargeTimer = 0f;
-        }
+        // Tell animator if we’re actually moving
+        isMoving = Mathf.Abs(moveInput) > 0.01f;
     }
-    */
 }
